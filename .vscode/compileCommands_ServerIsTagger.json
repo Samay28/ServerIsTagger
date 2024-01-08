@@ -1,0 +1,58 @@
+[
+	{
+		"file": "C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\Source\\ServerIsTagger\\ServerIsTagger.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.38.33129\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\.vscode\\compileCommands_ServerIsTagger\\ServerIsTagger.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\Source\\ServerIsTagger\\ServerIsTagger.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.38.33129\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\.vscode\\compileCommands_ServerIsTagger\\ServerIsTagger.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\Source\\ServerIsTagger\\ServerIsTagger.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.38.33129\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\.vscode\\compileCommands_ServerIsTagger\\ServerIsTagger.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\Source\\ServerIsTagger\\ServerIsTaggerCharacter.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.38.33129\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\.vscode\\compileCommands_ServerIsTagger\\ServerIsTagger.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\Source\\ServerIsTagger\\ServerIsTaggerCharacter.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.38.33129\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\.vscode\\compileCommands_ServerIsTagger\\ServerIsTagger.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\Source\\ServerIsTagger\\ServerIsTaggerGameMode.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.38.33129\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\.vscode\\compileCommands_ServerIsTagger\\ServerIsTagger.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\Source\\ServerIsTagger\\ServerIsTaggerGameMode.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.38.33129\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\Asus\\Documents\\GitHub\\ServerIsTagger\\.vscode\\compileCommands_ServerIsTagger\\ServerIsTagger.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	}
+]
