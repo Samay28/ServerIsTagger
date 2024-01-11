@@ -4,22 +4,23 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Controller.h"
+#include "GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/InputComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame. You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create the SpringArm component
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(GetMesh(), FName("head"));
 	SpringArm->bUsePawnControlRotation = true;
-
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
 	Camera->SetupAttachment(SpringArm);
@@ -29,7 +30,14 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
-// Called when the game starts or when spawned
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate the bCanOverlap variable
+	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
+}
+
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -41,7 +49,40 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(PlayerMappingContext, 0);
 		}
 	}
+
+	bCanOverlap = true;
+	UCapsuleComponent *CC = FindComponentByClass<UCapsuleComponent>();
+	if (CC)
+	{
+		CC->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBegin);
+	}
 }
+
+void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (HasAuthority() && bCanOverlap)
+    {
+        APlayerCharacter* OtherPlayer = Cast<APlayerCharacter>(OtherActor);
+        if (OtherPlayer && OtherPlayer != this)
+        {
+            // Only kick the other player if it's a valid player and not the server player itself
+            if (!OtherPlayer->IsLocallyControlled())
+            {
+                APlayerController* OtherPlayerController = Cast<APlayerController>(OtherPlayer->GetController());
+                if (OtherPlayerController)
+                {
+                    FString KickReasonString = TEXT("You were kicked from the server.");
+                    FText KickReason = FText::FromString(KickReasonString);
+                    OtherPlayerController->ClientReturnToMainMenuWithTextReason(KickReason);
+                }
+            }
+        }
+    }
+}
+
+
+
+
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
 	if (UEnhancedInputComponent *EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))

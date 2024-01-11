@@ -32,9 +32,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputMappingContext *PlayerMappingContext;
 
+	// UFUNCTION(Server,Reliable)
+	// void DisableInput();
+
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent *SpringArm;
@@ -48,4 +56,6 @@ protected:
 	void StopSprint();
 
 private:
+	UPROPERTY(Replicated)
+	bool bCanOverlap;
 };
