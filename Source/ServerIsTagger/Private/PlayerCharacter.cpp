@@ -10,6 +10,7 @@
 #include "Components/InputComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "AudioCaptureComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -26,6 +27,9 @@ APlayerCharacter::APlayerCharacter()
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
 
+	Voice = CreateDefaultSubobject<UAudioCaptureComponent>(TEXT("Voice Capture"));
+	Voice->SetupAttachment(Camera);
+
 	// Enable rotation to match movement direction
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -33,8 +37,6 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Replicate the bCanOverlap variable
 	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
 }
 
@@ -50,7 +52,7 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	bCanOverlap = true;
+	bCanOverlap = false;
 	UCapsuleComponent *CC = FindComponentByClass<UCapsuleComponent>();
 	if (CC)
 	{

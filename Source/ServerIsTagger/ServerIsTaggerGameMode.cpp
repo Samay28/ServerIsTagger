@@ -24,7 +24,7 @@ void AServerIsTaggerGameMode::JoinLanGame()
 	APlayerController* Pc = GetGameInstance()->GetFirstLocalPlayerController();
 	if(Pc)
 	{
-		Pc->ClientTravel("192.168.1.7", TRAVEL_Absolute);
+		Pc->ClientTravel("192.168.1.8", TRAVEL_Absolute);
 	}
 }
 
