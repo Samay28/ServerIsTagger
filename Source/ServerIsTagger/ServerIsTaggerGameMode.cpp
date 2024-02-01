@@ -19,12 +19,12 @@ void AServerIsTaggerGameMode::HostLanGame()
 {
 	GetWorld()->ServerTravel("/Game/Maps/GameMap?listen");
 }
-void AServerIsTaggerGameMode::JoinLanGame()
+void AServerIsTaggerGameMode::JoinLanGame(FString IP)
 {
 	APlayerController* Pc = GetGameInstance()->GetFirstLocalPlayerController();
 	if(Pc)
 	{
-		Pc->ClientTravel("192.168.1.8", TRAVEL_Absolute);
+		Pc->ClientTravel(IP, TRAVEL_Absolute);
 	}
 }
 

@@ -32,6 +32,8 @@ APlayerCharacter::APlayerCharacter()
 
 	// Enable rotation to match movement direction
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bReplicates = true;
+	NetUpdateFrequency = 30.0f;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -60,30 +62,27 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
-void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-    if (HasAuthority() && bCanOverlap)
-    {
-        APlayerCharacter* OtherPlayer = Cast<APlayerCharacter>(OtherActor);
-        if (OtherPlayer && OtherPlayer != this)
-        {
-            // Only kick the other player if it's a valid player and not the server player itself
-            if (!OtherPlayer->IsLocallyControlled())
-            {
-                APlayerController* OtherPlayerController = Cast<APlayerController>(OtherPlayer->GetController());
-                if (OtherPlayerController)
-                {
-                    FString KickReasonString = TEXT("You were kicked from the server.");
-                    FText KickReason = FText::FromString(KickReasonString);
-                    OtherPlayerController->ClientReturnToMainMenuWithTextReason(KickReason);
-                }
-            }
-        }
-    }
+	if (HasAuthority() && bCanOverlap)
+	{
+		APlayerCharacter *OtherPlayer = Cast<APlayerCharacter>(OtherActor);
+		if (OtherPlayer && OtherPlayer != this)
+		{
+			// Only kick the other player if it's a valid player and not the server player itself
+			if (!OtherPlayer->IsLocallyControlled())
+			{
+				APlayerController *OtherPlayerController = Cast<APlayerController>(OtherPlayer->GetController());
+				if (OtherPlayerController)
+				{
+					FString KickReasonString = TEXT("You were kicked from the server.");
+					FText KickReason = FText::FromString(KickReasonString);
+					OtherPlayerController->ClientReturnToMainMenuWithTextReason(KickReason);
+				}
+			}
+		}
+	}
 }
-
-
-
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
@@ -130,18 +129,67 @@ void APlayerCharacter::Look(const FInputActionValue &Value)
 	}
 }
 
+void APlayerCharacter::ServerSprint_Implementation()
+{
+	if (!bIsSprinting)
+	{
+		bIsSprinting = true;
+		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+		OnRep_IsSprinting();
+	}
+}
+
+bool APlayerCharacter::ServerSprint_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerStopSprint_Implementation()
+{
+	if (bIsSprinting)
+	{
+		bIsSprinting = false;
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		OnRep_IsSprinting();
+	}
+}
+
+bool APlayerCharacter::ServerStopSprint_Validate()
+{
+	return true;
+}
+void APlayerCharacter::OnRep_IsSprinting()
+{
+	// Client-side logic for handling sprinting state change
+	if (bIsSprinting)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+}
+
 void APlayerCharacter::Sprint()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	if (IsLocallyControlled())
+	{
+		ServerSprint();
+	}
 }
 
 void APlayerCharacter::StopSprint()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	if (IsLocallyControlled())
+	{
+		ServerStopSprint();
+	}
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
+
 {
 	Super::Tick(DeltaTime);
 }

@@ -17,8 +17,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HostLanGame();
 
+
 	UFUNCTION(BlueprintCallable)
-	void JoinLanGame();
+	void JoinLanGame(FString IP);
 };
 
 

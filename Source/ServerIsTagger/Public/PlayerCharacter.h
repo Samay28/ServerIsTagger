@@ -51,12 +51,24 @@ protected:
 	class UCameraComponent *Camera;
 
 	UPROPERTY(EditAnywhere)
-	class UAudioCaptureComponent* Voice;
+	class UAudioCaptureComponent *Voice;
 
 	void Move(const FInputActionValue &Value);
 	void Look(const FInputActionValue &Value);
 	void Sprint();
 	void StopSprint();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerSprint();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerStopSprint();
+
+	UPROPERTY(ReplicatedUsing = OnRep_IsSprinting)
+	bool bIsSprinting;
+
+	UFUNCTION()
+	void OnRep_IsSprinting();
 
 private:
 	UPROPERTY(Replicated)
