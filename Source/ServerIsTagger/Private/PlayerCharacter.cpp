@@ -161,14 +161,13 @@ bool APlayerCharacter::ServerStopSprint_Validate()
 void APlayerCharacter::OnRep_IsSprinting()
 {
 	// Client-side logic for handling sprinting state change
-	if (bIsSprinting)
-	{
-		GetCharacterMovement()->MaxWalkSpeed = 600.f;
-	}
-	else
-	{
-		GetCharacterMovement()->MaxWalkSpeed = 300.f;
-	}
+	float TargetMaxWalkSpeed = bIsSprinting ? 600.f : 300.f;
+
+	// Gradually adjust MaxWalkSpeed using interpolation
+	float InterpolationSpeed = 10.f; // Adjust the speed based on preference
+	float NewMaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, TargetMaxWalkSpeed, GetWorld()->GetDeltaSeconds(), InterpolationSpeed);
+
+	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
 }
 
 void APlayerCharacter::Sprint()
