@@ -30,7 +30,13 @@ public:
 	class UInputAction *SprintAction;
 
 	UPROPERTY(EditAnywhere, Category = Inputs)
+	class UInputAction *StartGameAction;
+
+	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputMappingContext *PlayerMappingContext;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool GameStarted;
 
 	// UFUNCTION(Server,Reliable)
 	// void DisableInput();
@@ -57,6 +63,7 @@ protected:
 	void Look(const FInputActionValue &Value);
 	void Sprint();
 	void StopSprint();
+	void StartGame();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerSprint();

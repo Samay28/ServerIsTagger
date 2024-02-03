@@ -30,10 +30,10 @@ APlayerCharacter::APlayerCharacter()
 	Voice = CreateDefaultSubobject<UAudioCaptureComponent>(TEXT("Voice Capture"));
 	Voice->SetupAttachment(Camera);
 
-	// Enable rotation to match movement direction
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bReplicates = true;
 	NetUpdateFrequency = 30.0f;
+	GameStarted = false;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -92,6 +92,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputCom
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Sprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprint);
+		EnhancedInputComponent->BindAction(StartGameAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartGame);
 	}
 }
 
@@ -131,12 +132,10 @@ void APlayerCharacter::Look(const FInputActionValue &Value)
 
 void APlayerCharacter::ServerSprint_Implementation()
 {
-	if (!bIsSprinting)
-	{
-		bIsSprinting = true;
-		GetCharacterMovement()->MaxWalkSpeed = 600.f;
-		OnRep_IsSprinting();
-	}
+
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	OnRep_IsSprinting();
+
 }
 
 bool APlayerCharacter::ServerSprint_Validate()
@@ -146,12 +145,10 @@ bool APlayerCharacter::ServerSprint_Validate()
 
 void APlayerCharacter::ServerStopSprint_Implementation()
 {
-	if (bIsSprinting)
-	{
-		bIsSprinting = false;
-		GetCharacterMovement()->MaxWalkSpeed = 300.f;
-		OnRep_IsSprinting();
-	}
+
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	OnRep_IsSprinting();
+	
 }
 
 bool APlayerCharacter::ServerStopSprint_Validate()
@@ -160,29 +157,31 @@ bool APlayerCharacter::ServerStopSprint_Validate()
 }
 void APlayerCharacter::OnRep_IsSprinting()
 {
-	// Client-side logic for handling sprinting state change
-	float TargetMaxWalkSpeed = bIsSprinting ? 600.f : 300.f;
 
-	// Gradually adjust MaxWalkSpeed using interpolation
-	float InterpolationSpeed = 10.f; // Adjust the speed based on preference
-	float NewMaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, TargetMaxWalkSpeed, GetWorld()->GetDeltaSeconds(), InterpolationSpeed);
-
-	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
 }
 
 void APlayerCharacter::Sprint()
 {
-	if (IsLocallyControlled())
-	{
-		ServerSprint();
-	}
+
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	ServerSprint();
+
 }
 
 void APlayerCharacter::StopSprint()
 {
-	if (IsLocallyControlled())
+
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	ServerStopSprint();
+
+}
+
+void APlayerCharacter::StartGame()
+{
+	if(HasAuthority())
 	{
-		ServerStopSprint();
+		GameStarted = true;
+		UE_LOG(LogTemp,Warning,TEXT("Game started?"));
 	}
 }
 

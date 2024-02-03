@@ -16,8 +16,17 @@ AServerIsTaggerGameMode::AServerIsTaggerGameMode()
 }
 
 void AServerIsTaggerGameMode::HostLanGame()
-{
-	GetWorld()->ServerTravel("/Game/Maps/GameMap?listen");
+{	
+	TArray<FString> MapPaths = {
+		"/Game/Maps/GameMap?listen",
+		"/Game/Maps/GameMap1?listen",
+		"/Game/Maps/GameMap2?listen",
+		"/Game/Maps/GameMap3?listen",
+		"/Game/Maps/GameMap4?listen"
+	};
+	FString SelectedMap = MapPaths[FMath::RandRange(0,MapPaths.Num()-1 )];
+	GetWorld()->ServerTravel(SelectedMap);
+	UE_LOG(LogTemp,Warning,TEXT("%s"), *SelectedMap);
 }
 void AServerIsTaggerGameMode::JoinLanGame(FString IP)
 {
