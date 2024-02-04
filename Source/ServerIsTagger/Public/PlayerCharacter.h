@@ -35,11 +35,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputMappingContext *PlayerMappingContext;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_GameStarted,BlueprintReadOnly)
 	bool GameStarted;
 
-	// UFUNCTION(Server,Reliable)
-	// void DisableInput();
+	UFUNCTION()
+	void OnRep_GameStarted();
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
@@ -66,6 +66,9 @@ protected:
 	void StartGame();
 
 	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerStartGame();
+
+	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerSprint();
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -76,6 +79,8 @@ protected:
 
 	UFUNCTION()
 	void OnRep_IsSprinting();
+
+	FVector StartLocation;
 
 private:
 	UPROPERTY(Replicated)

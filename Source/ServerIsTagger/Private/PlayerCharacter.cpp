@@ -33,13 +33,14 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bReplicates = true;
 	NetUpdateFrequency = 30.0f;
-	GameStarted = false;
+	// GameStarted = false;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
+	DOREPLIFETIME(APlayerCharacter, GameStarted);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -54,12 +55,13 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	bCanOverlap = false;
+	bCanOverlap = true;
 	UCapsuleComponent *CC = FindComponentByClass<UCapsuleComponent>();
 	if (CC)
 	{
 		CC->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBegin);
 	}
+	StartLocation = GetActorLocation();
 }
 
 void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
@@ -72,13 +74,8 @@ void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, 
 			// Only kick the other player if it's a valid player and not the server player itself
 			if (!OtherPlayer->IsLocallyControlled())
 			{
-				APlayerController *OtherPlayerController = Cast<APlayerController>(OtherPlayer->GetController());
-				if (OtherPlayerController)
-				{
-					FString KickReasonString = TEXT("You were kicked from the server.");
-					FText KickReason = FText::FromString(KickReasonString);
-					OtherPlayerController->ClientReturnToMainMenuWithTextReason(KickReason);
-				}
+				FVector NewLocation = StartLocation;
+				OtherPlayer->SetActorLocation(NewLocation);
 			}
 		}
 	}
@@ -135,7 +132,6 @@ void APlayerCharacter::ServerSprint_Implementation()
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	OnRep_IsSprinting();
-
 }
 
 bool APlayerCharacter::ServerSprint_Validate()
@@ -148,7 +144,6 @@ void APlayerCharacter::ServerStopSprint_Implementation()
 
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	OnRep_IsSprinting();
-	
 }
 
 bool APlayerCharacter::ServerStopSprint_Validate()
@@ -157,7 +152,6 @@ bool APlayerCharacter::ServerStopSprint_Validate()
 }
 void APlayerCharacter::OnRep_IsSprinting()
 {
-
 }
 
 void APlayerCharacter::Sprint()
@@ -165,7 +159,6 @@ void APlayerCharacter::Sprint()
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	ServerSprint();
-
 }
 
 void APlayerCharacter::StopSprint()
@@ -173,23 +166,43 @@ void APlayerCharacter::StopSprint()
 
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	ServerStopSprint();
-
 }
 
 void APlayerCharacter::StartGame()
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		GameStarted = true;
-		UE_LOG(LogTemp,Warning,TEXT("Game started?"));
+		ServerStartGame();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client attempting to start the game, but only the server can initiate it."));
 	}
 }
 
-// Called every frame
-void APlayerCharacter::Tick(float DeltaTime)
-
+void APlayerCharacter::ServerStartGame_Implementation()
 {
-	Super::Tick(DeltaTime);
+	if (!GameStarted)
+	{
+		GameStarted = true;
+		OnRep_GameStarted();
+	}
+}
+bool APlayerCharacter::ServerStartGame_Validate()
+{
+	return true;
 }
 
-// Called to bind functionality to input
+void APlayerCharacter::OnRep_GameStarted()
+{
+	UE_LOG(LogTemp, Warning, TEXT("GameStarted changed on the client: %s"), GameStarted ? TEXT("True") : TEXT("False"));
+}
+
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameStarted: %s"), GameStarted ? TEXT("True") : TEXT("False"));
+	}
+}

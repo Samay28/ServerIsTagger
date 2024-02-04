@@ -12,28 +12,25 @@ AServerIsTaggerGameMode::AServerIsTaggerGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
-
 }
 
 void AServerIsTaggerGameMode::HostLanGame()
-{	
+{
 	TArray<FString> MapPaths = {
 		"/Game/Maps/GameMap?listen",
 		"/Game/Maps/GameMap1?listen",
 		"/Game/Maps/GameMap2?listen",
 		"/Game/Maps/GameMap3?listen",
-		"/Game/Maps/GameMap4?listen"
-	};
-	FString SelectedMap = MapPaths[FMath::RandRange(0,MapPaths.Num()-1 )];
+		"/Game/Maps/GameMap4?listen"};
+	FString SelectedMap = MapPaths[FMath::RandRange(0, MapPaths.Num() - 1)];
 	GetWorld()->ServerTravel(SelectedMap);
-	UE_LOG(LogTemp,Warning,TEXT("%s"), *SelectedMap);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *SelectedMap);
 }
 void AServerIsTaggerGameMode::JoinLanGame(FString IP)
 {
-	APlayerController* Pc = GetGameInstance()->GetFirstLocalPlayerController();
-	if(Pc)
+	APlayerController *Pc = GetGameInstance()->GetFirstLocalPlayerController();
+	if (Pc)
 	{
 		Pc->ClientTravel(IP, TRAVEL_Absolute);
 	}
 }
-
