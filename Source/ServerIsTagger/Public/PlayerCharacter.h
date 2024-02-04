@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputMappingContext *PlayerMappingContext;
 
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_GameStarted,BlueprintReadOnly)
+	UPROPERTY(EditAnywhere,ReplicatedUsing = OnRep_GameStarted,BlueprintReadOnly)
 	bool GameStarted;
 
 	UFUNCTION()
@@ -65,7 +65,7 @@ protected:
 	void StopSprint();
 	void StartGame();
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
 	void ServerStartGame();
 
 	UFUNCTION(Server, Reliable, WithValidation)

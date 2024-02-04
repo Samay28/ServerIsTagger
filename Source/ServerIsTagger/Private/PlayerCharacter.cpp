@@ -32,14 +32,12 @@ APlayerCharacter::APlayerCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bReplicates = true;
-	NetUpdateFrequency = 30.0f;
-	// GameStarted = false;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
+	// DOREPLIFETIME(APlayerCharacter, bCanOverlap);
 	DOREPLIFETIME(APlayerCharacter, GameStarted);
 }
 
@@ -170,24 +168,21 @@ void APlayerCharacter::StopSprint()
 
 void APlayerCharacter::StartGame()
 {
-	if (HasAuthority())
-	{
-		ServerStartGame();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client attempting to start the game, but only the server can initiate it."));
-	}
+	// if (HasAuthority())
+	// {
+	ServerStartGame();
+	// }
 }
 
 void APlayerCharacter::ServerStartGame_Implementation()
 {
-	if (!GameStarted)
+	if (HasAuthority())
 	{
 		GameStarted = true;
 		OnRep_GameStarted();
 	}
 }
+
 bool APlayerCharacter::ServerStartGame_Validate()
 {
 	return true;
@@ -195,7 +190,7 @@ bool APlayerCharacter::ServerStartGame_Validate()
 
 void APlayerCharacter::OnRep_GameStarted()
 {
-	UE_LOG(LogTemp, Warning, TEXT("GameStarted changed on the client: %s"), GameStarted ? TEXT("True") : TEXT("False"));
+	// UE_LOG(LogTemp, Warning, TEXT("GameStarted changed on the client: %s"), GameStarted ? TEXT("True") : TEXT("False"));
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
