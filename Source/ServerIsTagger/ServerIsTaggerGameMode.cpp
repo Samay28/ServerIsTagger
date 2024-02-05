@@ -12,6 +12,7 @@ AServerIsTaggerGameMode::AServerIsTaggerGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+	
 }
 
 void AServerIsTaggerGameMode::HostLanGame()
@@ -34,3 +35,4 @@ void AServerIsTaggerGameMode::JoinLanGame(FString IP)
 		Pc->ClientTravel(IP, TRAVEL_Absolute);
 	}
 }
+

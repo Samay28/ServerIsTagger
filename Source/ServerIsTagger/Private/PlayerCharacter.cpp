@@ -31,14 +31,13 @@ APlayerCharacter::APlayerCharacter()
 	Voice->SetupAttachment(Camera);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	bReplicates = true;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	// DOREPLIFETIME(APlayerCharacter, bCanOverlap);
-	DOREPLIFETIME(APlayerCharacter, GameStarted);
+	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
+	// DOREPLIFETIME_CONDITION(APlayerCharacter, GameStarted, COND_SkipOwner);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -54,6 +53,7 @@ void APlayerCharacter::BeginPlay()
 	}
 
 	bCanOverlap = true;
+	bReplicates = true;
 	UCapsuleComponent *CC = FindComponentByClass<UCapsuleComponent>();
 	if (CC)
 	{
@@ -87,7 +87,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputCom
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Sprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprint);
-		EnhancedInputComponent->BindAction(StartGameAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartGame);
+		// EnhancedInputComponent->BindAction(StartGameAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartGame);
 	}
 }
 
@@ -166,38 +166,25 @@ void APlayerCharacter::StopSprint()
 	ServerStopSprint();
 }
 
-void APlayerCharacter::StartGame()
-{
-	// if (HasAuthority())
-	// {
-	ServerStartGame();
-	// }
-}
+// void APlayerCharacter::StartGame()
+// {
 
-void APlayerCharacter::ServerStartGame_Implementation()
-{
-	if (HasAuthority())
-	{
-		GameStarted = true;
-		OnRep_GameStarted();
-	}
-}
-
-bool APlayerCharacter::ServerStartGame_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::OnRep_GameStarted()
-{
-	// UE_LOG(LogTemp, Warning, TEXT("GameStarted changed on the client: %s"), GameStarted ? TEXT("True") : TEXT("False"));
-}
+// 	if (HasAuthority())
+// 	{
+// 		GameStarted = true;
+// 		OnRep_BoolChanged();
+// 	}
+// }
+// void APlayerCharacter::OnRep_BoolChanged()
+// {
+// 	GameStarted = true;
+// }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GameStarted: %s"), GameStarted ? TEXT("True") : TEXT("False"));
-	}
+	// if (!HasAuthority())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("GameStarted: %s"), GameStarted ? TEXT("True") : TEXT("False"));
+	// }
 }
