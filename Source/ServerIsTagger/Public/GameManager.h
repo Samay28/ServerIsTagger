@@ -30,4 +30,8 @@ public:
 	void StartGame();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
+
+	UPROPERTY(EditAnywhere)
+	class APlayerCharacter* Player;
+
 };

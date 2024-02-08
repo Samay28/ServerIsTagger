@@ -29,20 +29,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputAction *SprintAction;
 
-	// UPROPERTY(EditAnywhere, Category = Inputs)
-	// class UInputAction *StartGameAction;
 
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputMappingContext *PlayerMappingContext;
 
-	// UPROPERTY(ReplicatedUsing = OnRep_BoolChanged,BlueprintReadWrite)
-	// bool GameStarted;
 
-	// UFUNCTION()
-	// void OnRep_BoolChanged();
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+
+	void CanStartOverlapping();
+	void StartOverlapping();
+	FTimerHandle TimerHandle;
 
 protected:
 	// Called when the game starts or when spawned
@@ -63,7 +61,6 @@ protected:
 	void Look(const FInputActionValue &Value);
 	void Sprint();
 	void StopSprint();
-	// void StartGame();
 
 
 	UFUNCTION(Server, Reliable, WithValidation)

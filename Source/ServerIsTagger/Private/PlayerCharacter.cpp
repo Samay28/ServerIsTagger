@@ -51,25 +51,24 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(PlayerMappingContext, 0);
 		}
 	}
-
-	bCanOverlap = true;
-	bReplicates = true;
 	UCapsuleComponent *CC = FindComponentByClass<UCapsuleComponent>();
 	if (CC)
 	{
 		CC->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBegin);
 	}
 	StartLocation = GetActorLocation();
+	bCanOverlap = false;
+	bReplicates = true;
 }
 
 void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
+
 	if (HasAuthority() && bCanOverlap)
 	{
 		APlayerCharacter *OtherPlayer = Cast<APlayerCharacter>(OtherActor);
 		if (OtherPlayer && OtherPlayer != this)
 		{
-			// Only kick the other player if it's a valid player and not the server player itself
 			if (!OtherPlayer->IsLocallyControlled())
 			{
 				FVector NewLocation = StartLocation;
@@ -77,6 +76,17 @@ void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, 
 			}
 		}
 	}
+}
+
+void APlayerCharacter::CanStartOverlapping()
+{
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &APlayerCharacter::StartOverlapping, 60.0f, false);
+}
+
+void APlayerCharacter::StartOverlapping()
+{
+	bCanOverlap = true;
+	UE_LOG(LogTemp, Warning, TEXT("Done"));
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
@@ -87,7 +97,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputCom
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Sprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprint);
-		// EnhancedInputComponent->BindAction(StartGameAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartGame);
 	}
 }
 
@@ -166,25 +175,7 @@ void APlayerCharacter::StopSprint()
 	ServerStopSprint();
 }
 
-// void APlayerCharacter::StartGame()
-// {
-
-// 	if (HasAuthority())
-// 	{
-// 		GameStarted = true;
-// 		OnRep_BoolChanged();
-// 	}
-// }
-// void APlayerCharacter::OnRep_BoolChanged()
-// {
-// 	GameStarted = true;
-// }
-
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	// if (!HasAuthority())
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("GameStarted: %s"), GameStarted ? TEXT("True") : TEXT("False"));
-	// }
 }
