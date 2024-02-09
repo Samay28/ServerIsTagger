@@ -42,6 +42,7 @@ public:
 	void StartOverlapping();
 	FTimerHandle TimerHandle;
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -80,4 +81,5 @@ protected:
 private:
 	UPROPERTY(Replicated)
 	bool bCanOverlap;
+
 };

@@ -23,6 +23,10 @@ void AGameManager::BeginPlay()
 void AGameManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (Player->HasAuthority())
+	{
+		ServerLocation = Player->GetActorLocation();
+	}
 }
 void AGameManager::StartGame()
 {
@@ -38,4 +42,5 @@ void AGameManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGameManager, GameStarted);
+	DOREPLIFETIME(AGameManager, ServerLocation);
 }

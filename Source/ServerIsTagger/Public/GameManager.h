@@ -32,6 +32,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 
 	UPROPERTY(EditAnywhere)
-	class APlayerCharacter* Player;
+	class APlayerCharacter *Player;
 
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	FVector ServerLocation;
 };
