@@ -78,6 +78,15 @@ protected:
 
 	FVector StartLocation;
 
+	UPROPERTY(EditAnywhere)
+	float MaxStamina = 100.f;
+
+	UPROPERTY(VisibleAnywhere)
+	float CurrentStamina = MaxStamina;
+
+	UPROPERTY(EditAnywhere)
+	float StaminaDepletionCost = 10.f;
+
 private:
 	UPROPERTY(Replicated)
 	bool bCanOverlap;
