@@ -36,4 +36,10 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FVector ServerLocation;
+
+	UFUNCTION()
+	FVector InititateTeleporting();
+
+	UPROPERTY(EditAnywhere)
+	TArray<FVector> TeleportLocations;
 };

@@ -29,11 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputAction *SprintAction;
 
-
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputMappingContext *PlayerMappingContext;
-
-
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
@@ -42,6 +39,11 @@ public:
 	void StartOverlapping();
 	FTimerHandle TimerHandle;
 
+	UPROPERTY(EditAnywhere)
+	class AGameManager *GM;
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void TeleportPlayer();
 
 protected:
 	// Called when the game starts or when spawned
@@ -63,7 +65,6 @@ protected:
 	void Sprint();
 	void StopSprint();
 
-
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerSprint();
 
@@ -78,17 +79,12 @@ protected:
 
 	FVector StartLocation;
 
-	UPROPERTY(EditAnywhere)
-	float MaxStamina = 100.f;
-
-	UPROPERTY(VisibleAnywhere)
-	float CurrentStamina = MaxStamina;
-
-	UPROPERTY(EditAnywhere)
-	float StaminaDepletionCost = 10.f;
+	UPROPERTY(Replicated)
+	int TeleportCounts;
 
 private:
 	UPROPERTY(Replicated)
 	bool bCanOverlap;
 
+	FTimerHandle SprintTimerHandle;
 };

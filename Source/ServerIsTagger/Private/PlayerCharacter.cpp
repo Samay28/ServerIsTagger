@@ -9,8 +9,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/InputComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "AudioCaptureComponent.h"
+#include "TimerManager.h"
+#include "GameManager.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -31,13 +34,20 @@ APlayerCharacter::APlayerCharacter()
 	Voice->SetupAttachment(Camera);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	GM = Cast<AGameManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AGameManager::StaticClass()));
+	if (!GM)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AGameManager not found!"));
+	}
+	TeleportCounts = 2;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
-	// DOREPLIFETIME_CONDITION(APlayerCharacter, GameStarted, COND_SkipOwner);
+	DOREPLIFETIME(APlayerCharacter, TeleportCounts);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -148,7 +158,6 @@ bool APlayerCharacter::ServerSprint_Validate()
 
 void APlayerCharacter::ServerStopSprint_Implementation()
 {
-
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	OnRep_IsSprinting();
 }
@@ -170,9 +179,19 @@ void APlayerCharacter::Sprint()
 
 void APlayerCharacter::StopSprint()
 {
-
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	ServerStopSprint();
+}
+
+void APlayerCharacter::TeleportPlayer_Implementation()
+{
+	if (TeleportCounts > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HAHA"));
+		FVector RandomTeleportLocation = GM->InititateTeleporting();
+		SetActorLocation(RandomTeleportLocation);
+		TeleportCounts--;
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

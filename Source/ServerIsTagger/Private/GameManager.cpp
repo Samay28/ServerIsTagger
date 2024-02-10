@@ -9,6 +9,7 @@
 AGameManager::AGameManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -43,4 +44,10 @@ void AGameManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGameManager, GameStarted);
 	DOREPLIFETIME(AGameManager, ServerLocation);
+}
+
+FVector AGameManager::InititateTeleporting()
+{
+	int32 RandomIndex = FMath::RandRange(0, TeleportLocations.Num() - 1);
+	return TeleportLocations[RandomIndex];
 }
