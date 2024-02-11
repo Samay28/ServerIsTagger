@@ -172,7 +172,6 @@ void APlayerCharacter::OnRep_IsSprinting()
 
 void APlayerCharacter::Sprint()
 {
-
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	ServerSprint();
 }
