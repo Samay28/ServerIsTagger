@@ -48,6 +48,7 @@ void AGameManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLife
 
 FVector AGameManager::InititateTeleporting()
 {
+
 	int32 RandomIndex = FMath::RandRange(0, TeleportLocations.Num() - 1);
 	return TeleportLocations[RandomIndex];
 }

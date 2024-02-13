@@ -191,7 +191,7 @@ void APlayerCharacter::StopSprint()
 
 void APlayerCharacter::TeleportPlayer_Implementation()
 {
-	if (TeleportCounts > 0)
+	if (TeleportCounts > 0 && GM->GameStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HAHA"));
 		FVector RandomTeleportLocation = GM->InititateTeleporting();
