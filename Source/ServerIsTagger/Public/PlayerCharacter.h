@@ -45,6 +45,7 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void TeleportPlayer();
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -82,9 +83,10 @@ protected:
 	UPROPERTY(Replicated)
 	int TeleportCounts;
 
-private:
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	bool bCanOverlap;
 
+
+private:
 	FTimerHandle SprintTimerHandle;
 };
