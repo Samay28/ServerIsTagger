@@ -11,6 +11,7 @@ AGameManager::AGameManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	QualifyingPlayers = 3;
 }
 
 // Called when the game starts or when spawned
@@ -59,41 +60,44 @@ void AGameManager::CalculateResults()
 	UWorld *World = GetWorld();
 	if (!World)
 	{
-		// Handle the case where the world is not valid
 		return;
 	}
 
-	// Create an array to store player distances
 	TArray<TPair<APlayerController *, float>> PlayerDistances;
+
+	// Get the server player controller
+	APlayerController *ServerPlayerController = World->GetFirstPlayerController();
 
 	// Iterate over all player controllers
 	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
 	{
 		APlayerController *PlayerController = It->Get();
-		if (PlayerController && PlayerController->GetPawn())
+		if (PlayerController && PlayerController->GetPawn() && PlayerController != ServerPlayerController)
 		{
 			float Distance = FVector::Distance(PlayerController->GetPawn()->GetActorLocation(), DestinationLocation);
 			PlayerDistances.Add(TPair<APlayerController *, float>(PlayerController, Distance));
 		}
 	}
 
-	// Ensure there are at least 2 players
 	if (PlayerDistances.Num() < 2)
 	{
-		// Handle the case where there are not enough players
 		return;
 	}
 
-	// Sort the player distances array based on distances
+	// quick Sort
 	PlayerDistances.Sort([](const TPair<APlayerController *, float> &A, const TPair<APlayerController *, float> &B)
 						 { return A.Value < B.Value; });
 
 	// Get the top 2 nearest players
 	TArray<APlayerController *> NearestPlayers;
-	NearestPlayers.Add(PlayerDistances[0].Key);
-	NearestPlayers.Add(PlayerDistances[1].Key);
+	for(int i=0; i<QualifyingPlayers; i++)
+	{
+		NearestPlayers.Add(PlayerDistances[i].Key);
+	}
 
-	// Update UI text based on qualification status
+	// NearestPlayers.Add(PlayerDistances[0].Key);
+	// NearestPlayers.Add(PlayerDistances[1].Key);
+
 	for (TPair<APlayerController *, float> &PlayerDistance : PlayerDistances)
 	{
 		APlayerCharacter *PlayerCharacter = Cast<APlayerCharacter>(PlayerDistance.Key->GetPawn());

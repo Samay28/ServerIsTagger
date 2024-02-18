@@ -15,7 +15,6 @@
 #include "TimerManager.h"
 #include "GameManager.h"
 
-
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -42,6 +41,7 @@ APlayerCharacter::APlayerCharacter()
 		UE_LOG(LogTemp, Warning, TEXT("AGameManager not found!"));
 	}
 	TeleportCounts = 2;
+	TimesOverlapped = 0;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -49,6 +49,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
 	DOREPLIFETIME(APlayerCharacter, TeleportCounts);
+	DOREPLIFETIME(APlayerCharacter, TimesOverlapped);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -80,10 +81,19 @@ void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, 
 		APlayerCharacter *OtherPlayer = Cast<APlayerCharacter>(OtherActor);
 		if (OtherPlayer && OtherPlayer != this)
 		{
-			if (!OtherPlayer->IsLocallyControlled())
+			if (!OtherPlayer->IsLocallyControlled() && OtherPlayer->TimesOverlapped < 1)
 			{
 				FVector NewLocation = StartLocation;
 				OtherPlayer->SetActorLocation(NewLocation);
+				OtherPlayer->TimesOverlapped++;
+			}
+			else if (OtherPlayer->TimesOverlapped >= 1)
+			{
+				APlayerController *OtherPlayerController = OtherPlayer->GetController<APlayerController>();
+				if (OtherPlayerController)
+				{
+					OtherPlayerController->ClientReturnToMainMenuWithTextReason(FText::FromString("You are kicked from the game"));
+				}
 			}
 		}
 	}

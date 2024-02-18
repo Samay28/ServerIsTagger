@@ -52,4 +52,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CalculateResults();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int QualifyingPlayers;
 };
