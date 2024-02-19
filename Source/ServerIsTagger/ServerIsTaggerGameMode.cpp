@@ -24,7 +24,7 @@ void AServerIsTaggerGameMode::HostLanGame()
 		"/Game/Maps/GameMap3?listen",
 		"/Game/Maps/GameMap4?listen"};
 	FString SelectedMap = MapPaths[FMath::RandRange(0, MapPaths.Num() - 1)];
-	GetWorld()->ServerTravel("/Game/Maps/GameMap?listen");
+	GetWorld()->ServerTravel(SelectedMap);
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *SelectedMap);
 }
 void AServerIsTaggerGameMode::JoinLanGame(FString IP)
