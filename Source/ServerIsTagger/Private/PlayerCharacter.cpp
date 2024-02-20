@@ -81,13 +81,13 @@ void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, 
 		APlayerCharacter *OtherPlayer = Cast<APlayerCharacter>(OtherActor);
 		if (OtherPlayer && OtherPlayer != this)
 		{
-			if (!OtherPlayer->IsLocallyControlled() && OtherPlayer->TimesOverlapped < 1)
+			if (!OtherPlayer->IsLocallyControlled() && OtherPlayer->TimesOverlapped < 2)
 			{
 				FVector NewLocation = StartLocation;
 				OtherPlayer->SetActorLocation(NewLocation);
 				OtherPlayer->TimesOverlapped++;
 			}
-			else if (OtherPlayer->TimesOverlapped >= 1)
+			else if (OtherPlayer->TimesOverlapped >= 2)
 			{
 				APlayerController *OtherPlayerController = OtherPlayer->GetController<APlayerController>();
 				if (OtherPlayerController)
