@@ -12,6 +12,7 @@ AGameManager::AGameManager()
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 	QualifyingPlayers = 3;
+	PlayersLeft = 10;
 }
 
 // Called when the game starts or when spawned
@@ -46,6 +47,7 @@ void AGameManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGameManager, GameStarted);
 	DOREPLIFETIME(AGameManager, ServerLocation);
+	DOREPLIFETIME(AGameManager, PlayersLeft);
 }
 
 FVector AGameManager::InititateTeleporting()
@@ -94,9 +96,6 @@ void AGameManager::CalculateResults()
 	{
 		NearestPlayers.Add(PlayerDistances[i].Key);
 	}
-
-	// NearestPlayers.Add(PlayerDistances[0].Key);
-	// NearestPlayers.Add(PlayerDistances[1].Key);
 
 	for (TPair<APlayerController *, float> &PlayerDistance : PlayerDistances)
 	{

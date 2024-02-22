@@ -75,25 +75,33 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-
 	if (HasAuthority() && bCanOverlap)
 	{
 		APlayerCharacter *OtherPlayer = Cast<APlayerCharacter>(OtherActor);
 		if (OtherPlayer && OtherPlayer != this)
 		{
-			if (!OtherPlayer->IsLocallyControlled() && OtherPlayer->TimesOverlapped < 2)
+			if (!OtherPlayer->IsLocallyControlled())
 			{
+				// if (OtherPlayer->TimesOverlapped == 0)
+				// {
+				//     FVector NewLocation = StartLocation;
+				//     OtherPlayer->SetActorLocation(NewLocation);
+				//     OtherPlayer->TimesOverlapped++;
+				// 	UE_LOG(LogTemp,Warning,TEXT("Go back"));
+				// }
+				// else if (OtherPlayer->TimesOverlapped >= 1)
+				// {
+				//     APlayerController* OtherPlayerController = OtherPlayer->GetController<APlayerController>();
+				//     if (OtherPlayerController)
+				//     {
+				//         OtherPlayerController->ClientReturnToMainMenuWithTextReason(FText::FromString("You are kicked from the game"));
+				//         GM->PlayersLeft--;
+				// 		UE_LOG(LogTemp,Warning,TEXT("Go out"));
+				//     }
+				// }
 				FVector NewLocation = StartLocation;
 				OtherPlayer->SetActorLocation(NewLocation);
-				OtherPlayer->TimesOverlapped++;
-			}
-			else if (OtherPlayer->TimesOverlapped >= 2)
-			{
-				APlayerController *OtherPlayerController = OtherPlayer->GetController<APlayerController>();
-				if (OtherPlayerController)
-				{
-					OtherPlayerController->ClientReturnToMainMenuWithTextReason(FText::FromString("You are kicked from the game"));
-				}
+				// OtherPlayer->TimesOverlapped++;
 			}
 		}
 	}
@@ -101,7 +109,7 @@ void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, 
 
 void APlayerCharacter::CanStartOverlapping()
 {
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &APlayerCharacter::StartOverlapping, 60.0f, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &APlayerCharacter::StartOverlapping, 6.0f, false);
 }
 
 void APlayerCharacter::StartOverlapping()

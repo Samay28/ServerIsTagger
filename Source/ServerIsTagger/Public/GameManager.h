@@ -55,4 +55,7 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int QualifyingPlayers;
+
+	UPROPERTY(Replicated,BlueprintReadOnly)
+	int PlayersLeft;
 };
