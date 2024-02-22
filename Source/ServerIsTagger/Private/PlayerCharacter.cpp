@@ -41,7 +41,6 @@ APlayerCharacter::APlayerCharacter()
 		UE_LOG(LogTemp, Warning, TEXT("AGameManager not found!"));
 	}
 	TeleportCounts = 2;
-	TimesOverlapped = 0;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -49,7 +48,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerCharacter, bCanOverlap);
 	DOREPLIFETIME(APlayerCharacter, TeleportCounts);
-	DOREPLIFETIME(APlayerCharacter, TimesOverlapped);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -82,26 +80,8 @@ void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, 
 		{
 			if (!OtherPlayer->IsLocallyControlled())
 			{
-				// if (OtherPlayer->TimesOverlapped == 0)
-				// {
-				//     FVector NewLocation = StartLocation;
-				//     OtherPlayer->SetActorLocation(NewLocation);
-				//     OtherPlayer->TimesOverlapped++;
-				// 	UE_LOG(LogTemp,Warning,TEXT("Go back"));
-				// }
-				// else if (OtherPlayer->TimesOverlapped >= 1)
-				// {
-				//     APlayerController* OtherPlayerController = OtherPlayer->GetController<APlayerController>();
-				//     if (OtherPlayerController)
-				//     {
-				//         OtherPlayerController->ClientReturnToMainMenuWithTextReason(FText::FromString("You are kicked from the game"));
-				//         GM->PlayersLeft--;
-				// 		UE_LOG(LogTemp,Warning,TEXT("Go out"));
-				//     }
-				// }
 				FVector NewLocation = StartLocation;
 				OtherPlayer->SetActorLocation(NewLocation);
-				// OtherPlayer->TimesOverlapped++;
 			}
 		}
 	}
@@ -109,7 +89,7 @@ void APlayerCharacter::OnOverlapBegin(UPrimitiveComponent *OverlappedComponent, 
 
 void APlayerCharacter::CanStartOverlapping()
 {
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &APlayerCharacter::StartOverlapping, 6.0f, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &APlayerCharacter::StartOverlapping, 60.0f, false);
 }
 
 void APlayerCharacter::StartOverlapping()

@@ -83,13 +83,11 @@ protected:
 	UPROPERTY(Replicated)
 	int TeleportCounts;
 
-	UPROPERTY(Replicated)
-	int TimesOverlapped;
-
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	bool bCanOverlap;
 
 
 private:
 	FTimerHandle SprintTimerHandle;
+
 };
