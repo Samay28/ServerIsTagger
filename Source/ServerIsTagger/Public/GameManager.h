@@ -22,6 +22,8 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	FVector DestinationLocation;
 
+	FTimerHandle ResultsHandle;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

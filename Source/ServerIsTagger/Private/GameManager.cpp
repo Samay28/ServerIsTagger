@@ -39,6 +39,7 @@ void AGameManager::StartGame()
 		GameStarted = true;
 		Player->CanStartOverlapping();
 		UE_LOG(LogTemp, Warning, TEXT("Called"));
+		GetWorldTimerManager().SetTimer(ResultsHandle, this, &AGameManager::CalculateResults, 600.0f, false);
 	}
 }
 
