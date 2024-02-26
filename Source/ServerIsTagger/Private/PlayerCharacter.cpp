@@ -11,8 +11,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
-#include "AudioCaptureComponent.h"
-#include "TimerManager.h"
 #include "GameManager.h"
 
 // Sets default values
@@ -29,9 +27,6 @@ APlayerCharacter::APlayerCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
-
-	Voice = CreateDefaultSubobject<UAudioCaptureComponent>(TEXT("Voice Capture"));
-	Voice->SetupAttachment(Camera);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 

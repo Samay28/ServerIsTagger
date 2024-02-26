@@ -11,7 +11,7 @@ AGameManager::AGameManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-	QualifyingPlayers = 3;
+	QualifyingPlayers = 5;
 	PlayersLeft = 10;
 }
 

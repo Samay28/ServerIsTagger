@@ -58,9 +58,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent *Camera;
 
-	UPROPERTY(EditAnywhere)
-	class UAudioCaptureComponent *Voice;
-
 	void Move(const FInputActionValue &Value);
 	void Look(const FInputActionValue &Value);
 	void Sprint();
